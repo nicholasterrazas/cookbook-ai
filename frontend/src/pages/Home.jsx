@@ -1,6 +1,6 @@
 import { Container, Typography } from "@mui/material";
 
-function Home() {
+export default function Home() {
     return (
         <Container>
             <Typography variant="h3" align="center" gutterBottom>
@@ -12,5 +12,3 @@ function Home() {
         </Container>
     );
 }
-
-export default Home;

@@ -1,8 +1,7 @@
+import RecipeCard from "../components/RecipeCard";
 
-function Recipes() {
+export default function Recipes() {
     return (
-        <></>
+        <RecipeCard />
     );
 }
-
-export default Recipes;
