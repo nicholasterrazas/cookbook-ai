@@ -11,11 +11,11 @@ export default function Recipes() {
             </Typography>
             <Grid container spacing={3}>
                 {myRecipes.map((recipe, index) => (
-                    <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Grid key={index}>
                         <RecipeCard recipe={recipe} />
                     </Grid>
                 ))}
-                <Grid item xs={12} sm={6} md={4} key="addRecipe">
+                <Grid key="addRecipe">
                     <NewRecipeCard />
                 </Grid>
             </Grid>

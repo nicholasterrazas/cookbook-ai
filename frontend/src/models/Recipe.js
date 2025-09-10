@@ -1,4 +1,4 @@
-class Recipe {
+export class Recipe {
     constructor({
         id = null,
         title = null,
