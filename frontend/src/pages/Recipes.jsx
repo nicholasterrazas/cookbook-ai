@@ -1,6 +1,7 @@
 import { Container, Grid, Typography } from "@mui/material";
 import RecipeCard from "../components/RecipeCard";
 import { myRecipes } from "../models/Recipe";
+import NewRecipeCard from "../components/NewRecipeCard";
 
 export default function Recipes() {
     return (
@@ -14,6 +15,9 @@ export default function Recipes() {
                         <RecipeCard recipe={recipe} />
                     </Grid>
                 ))}
+                <Grid item xs={12} sm={6} md={4} key="addRecipe">
+                    <NewRecipeCard />
+                </Grid>
             </Grid>
         </Container>
     );
