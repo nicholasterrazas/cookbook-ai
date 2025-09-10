@@ -10,14 +10,14 @@ export default function Recipes() {
                 My Recipes
             </Typography>
             <Grid container spacing={3}>
+                <Grid key="-1">
+                    <NewRecipeCard />
+                </Grid>
                 {myRecipes.map((recipe, index) => (
                     <Grid key={index}>
                         <RecipeCard recipe={recipe} />
                     </Grid>
                 ))}
-                <Grid key="addRecipe">
-                    <NewRecipeCard />
-                </Grid>
             </Grid>
         </Container>
     );

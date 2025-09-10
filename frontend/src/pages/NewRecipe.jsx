@@ -45,6 +45,7 @@ export default function NewRecipe() {
         // TODO: PROCESS FORM -> send to backend
         const recipe = new Recipe({
                 ...form,
+                id: myRecipes.length,
                 ingredients: processedIngredients,
                 instructions: processedInstructions,
                 tags: processedTags

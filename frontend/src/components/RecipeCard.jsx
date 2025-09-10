@@ -1,10 +1,13 @@
 import { Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 
 export default function RecipeCard({ recipe }) {
+    const navigate = useNavigate();
+    
     return (
-        <Card sx={{ maxWidth: 345 }}>
-            <CardActionArea>
+        <Card>
+            <CardActionArea sx={{ width: 345, height: 300 }} onClick={() => navigate(`/recipes/${recipe.id}`)}>
                 <CardContent>
                     {recipe.image && (
                         <CardMedia

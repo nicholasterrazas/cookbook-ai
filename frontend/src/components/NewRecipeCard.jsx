@@ -6,7 +6,7 @@ export default function NewRecipeCard() {
     const navigate = useNavigate();
     return (
         <Card>
-            <CardActionArea onClick={() => navigate("/recipes/new")} >
+            <CardActionArea sx={{ width: 345, height: 300 }} onClick={() => navigate("/recipes/new")} >
                 <CardContent sx={{ textAlign: "center" }}>
                     <AddIcon sx={{ fontSize: 60, color: "primary.main" }} />
                     <Typography variant="h6">

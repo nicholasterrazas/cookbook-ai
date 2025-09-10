@@ -4,6 +4,7 @@ import Recipes from "./pages/Recipes";
 import Navbar from "./components/Navbar";
 import { createTheme, ThemeProvider } from "@mui/material";
 import NewRecipe from "./pages/NewRecipe";
+import RecipeDetails from "./components/RecipeDetails";
 
 const theme = createTheme({
 	palette: {
@@ -25,6 +26,7 @@ function App() {
 					<Route path="/" element={<Home />} />
 					<Route path="/recipes" element={<Recipes />} />
 					<Route path="/recipes/new" element={<NewRecipe />} />
+					<Route path="/recipes/:id" element={<RecipeDetails />} />
 				</Routes>
 			</Router>
 		</ThemeProvider>
