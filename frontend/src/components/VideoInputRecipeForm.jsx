@@ -2,6 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -17,6 +18,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function VideoInputRecipeForm() {
+    const navigate = useNavigate();
 
     const handleVideoUpload = (e) => {
         const file = e.target.files[0];
@@ -28,6 +30,8 @@ export default function VideoInputRecipeForm() {
         })
         .then((res) => {
             console.log(res);
+            const recipeId = res.data.recipe_id
+            navigate(`/recipes/${recipeId}`)
         })
         .catch((err) => {
             console.error(err);

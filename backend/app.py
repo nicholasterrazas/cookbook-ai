@@ -35,7 +35,27 @@ async def upload_video(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    return {"message": "Video successfully uploaded", "file_path": file_path}
+    placeholder_recipe = RecipeIn(
+        title="Processing...",
+        description="This recipe is being generated from the uploaded video.",
+        ingredients=[],
+        instructions=[],
+        tags=[],
+        source=None,
+        image=None,
+        status="processing",
+        video_path=file_path
+    )
+
+    # upload the placeholder so that we can access its id from MongoDB
+    # so we can poll for the id once the recipe is done being processed 
+    recipe_in_progress = await db.create_recipe(placeholder_recipe)
+
+    return {
+        "message": "Video successfully uploaded", 
+        "recipe_id": recipe_in_progress.id,
+        "status": "processing"    
+    }
 
 
 @app.get("/recipes", response_model=list[Recipe])

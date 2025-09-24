@@ -10,6 +10,8 @@ class RecipeIn(BaseModel):
     tags: List[str]
     source: Optional[str] = None
     image: Optional[str] = None
+    status: str = "completed"   # defaults as completed for manually inputted recipes
+    video_path: Optional[str] = None
 
 
 class Recipe(RecipeIn):
