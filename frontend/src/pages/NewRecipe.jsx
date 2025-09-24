@@ -1,7 +1,8 @@
 import { Box, Button, Container, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
-import { myRecipes, Recipe } from "../models/Recipe";
+import { Recipe } from "../models/Recipe";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // split ingredients by newlines, so we can include quantities of ingredients if included
 function processIngredients(ingredientsString) {
@@ -35,25 +36,27 @@ export default function NewRecipe() {
 
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const processedIngredients = processIngredients(form.ingredients);
         const processedInstructions = processInstructions(form.instructions);
         const processedTags = processTags(form.tags);
 
-        // TODO: PROCESS FORM -> send to backend
-        const recipe = new Recipe({
+        const recipe = {
                 ...form,
-                id: myRecipes.length,
                 ingredients: processedIngredients,
                 instructions: processedInstructions,
                 tags: processedTags
-        });
-        myRecipes.push(recipe);
-        console.log(myRecipes);
+        };
 
-        console.log("New Recipe Submitted:" + recipe);
+        await axios.post("http://localhost:8000/recipes", recipe)
+        .then((res) => {
+            console.log(res);
+        })
+        .then((err) => {
+            console.error(err);
+        })
 
         navigate("/recipes")
     }
