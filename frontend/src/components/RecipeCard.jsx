@@ -7,7 +7,7 @@ export default function RecipeCard({ recipe }) {
     
     return (
         <Card>
-            <CardActionArea sx={{ width: 345, height: 300 }} onClick={() => navigate(`/recipes/${recipe.id}`)}>
+            <CardActionArea sx={{ width: 345, height: 300 }} onClick={() => navigate(`/recipes/${recipe._id}`)}>
                 <CardContent>
                     {recipe.image && (
                         <CardMedia
