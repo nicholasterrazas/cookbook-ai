@@ -1,21 +1,31 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Typography, Box, Chip, List, ListItem, ListItemText, Button, Divider } from "@mui/material";
 import { myRecipes } from "../models/Recipe";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function RecipeDetails() {
     const { id } = useParams();
+    const [recipe, setRecipe] = useState(null);
     const navigate = useNavigate();
 
-    const recipe = myRecipes[id];
+    useEffect(() => {
+        const fetchRecipe = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/recipes/${id}`);
+                console.log(response.data);
+                setRecipe(response.data);
+            } catch (error) {
+                console.error("Error fetching recipe:", error);
+            }
+        };
+
+        fetchRecipe();    
+    }, [id]);
 
     if (!recipe) {
         return (
-            <Container sx={{ py: 4 }}>
-                <Typography variant="h5">Recipe not found</Typography>
-                <Button sx={{ mt: 2 }} variant="contained" onClick={() => navigate("/recipes")}>
-                    Back to Recipes
-                </Button>
-            </Container>
+            <Typography>Loading recipe...</Typography>
         );
   }
 
