@@ -1,6 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from models.recipe import Recipe, RecipeIn
+import shutil
+import os
 import db
 
 app = FastAPI()
@@ -13,10 +15,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+UPLOAD_DIR = "uploads"
+
+if not os.path.exists(UPLOAD_DIR):
+    os.makedirs(UPLOAD_DIR) 
+
 
 @app.get("/")
 def root():
     return {"message": "Welcome to Cookbook AI"}
+
+
+@app.post("/recipes/upload-video")
+async def upload_video(file: UploadFile = File(...)):
+    if file.content_type != "video/mp4":
+        raise HTTPException(status_code=400, detail="Only MP4 files are supported")
+    
+    file_path = os.path.join(UPLOAD_DIR, file.filename)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    return {"message": "Video successfully uploaded", "file_path": file_path}
 
 
 @app.get("/recipes", response_model=list[Recipe])

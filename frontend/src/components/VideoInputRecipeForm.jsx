@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import axios from "axios";
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -16,6 +17,23 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function VideoInputRecipeForm() {
+
+    const handleVideoUpload = (e) => {
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append("file", file)
+
+        axios.post("http://localhost:8000/recipes/upload-video", formData, {
+            headers: { "Content-Type": "multipart/form-data"}
+        })
+        .then((res) => {
+            console.log(res);
+        })
+        .catch((err) => {
+            console.error(err);
+        })
+    };
+
     return (
         <Box>
             <Typography variant="body1">
@@ -33,7 +51,7 @@ export default function VideoInputRecipeForm() {
                 <VisuallyHiddenInput 
                     type="file"
                     accept="video/mp4"
-                    onChange={(e) => console.log(e.target.files)}
+                    onChange={handleVideoUpload}
                 />
             </Button>
         </Box>
