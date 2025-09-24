@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
-class Recipe(BaseModel):
-    id: Optional[str] = Field(default=None, alias="_id")    # MongoDB ObjectId
+
+class RecipeIn(BaseModel):
     title: str
     description: str
     ingredients: List[str]
@@ -10,6 +10,12 @@ class Recipe(BaseModel):
     tags: List[str]
     source: Optional[str] = None
     image: Optional[str] = None
+
+
+class Recipe(RecipeIn):
+    id: Optional[str] = Field(default=None, alias="_id")    # MongoDB ObjectId
+
+    
 
 example1 = Recipe(
         recipe_id = 0,
