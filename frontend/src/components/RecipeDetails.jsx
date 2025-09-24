@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Typography, Box, Chip, List, ListItem, ListItemText, Button, Divider } from "@mui/material";
-import { myRecipes } from "../models/Recipe";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -11,13 +10,14 @@ export default function RecipeDetails() {
 
     useEffect(() => {
         const fetchRecipe = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8000/recipes/${id}`);
-                console.log(response.data);
-                setRecipe(response.data);
-            } catch (error) {
-                console.error("Error fetching recipe:", error);
-            }
+            axios.get(`http://localhost:8000/recipes/${id}`)
+            .then((res) => {
+                console.log(res.data);
+                setRecipe(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
         };
 
         fetchRecipe();    

@@ -10,15 +10,17 @@ export default function Recipes() {
 
     useEffect(() => {
         const fetchRecipes = async () => {
-            try {
-                const response = await axios.get("http://localhost:8000/recipes");
-                console.log("Recipes:", response.data);
-                setRecipes(response.data);
-            } catch (error) {
-                console.error("Error fetching recipes:", error);
-            } finally {
+            axios.get("http://localhost:8000/recipes")
+            .then((res) => {
+                console.log("Recipes:", res.data);
+                setRecipes(res.data);                
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
                 setLoading(false);
-            }
+            });
         };
 
         fetchRecipes();
