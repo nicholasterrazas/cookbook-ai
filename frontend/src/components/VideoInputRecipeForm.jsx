@@ -30,7 +30,7 @@ export default function VideoInputRecipeForm() {
         })
         .then((res) => {
             console.log(res);
-            const recipeId = res.data.recipe_id
+            const recipeId = res.data._id
             navigate(`/recipes/${recipeId}`)
         })
         .catch((err) => {
