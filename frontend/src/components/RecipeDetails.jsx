@@ -1,19 +1,33 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Typography, Box, Chip, List, ListItem, ListItemText, Button, Divider } from "@mui/material";
+import { Container, Typography, Box, Chip, List, ListItem, ListItemText, Button, Divider, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function RecipeDetails() {
     const { id } = useParams();
     const [recipe, setRecipe] = useState(null);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
+        let intervalId;
+
         const fetchRecipe = async () => {
             axios.get(`http://localhost:8000/recipes/${id}`)
             .then((res) => {
-                console.log(res.data);
-                setRecipe(res.data);
+                let recipe = res.data;
+                console.log(recipe);
+                setRecipe(recipe);
+
+                // poll until the recipe is done being processed
+                if (recipe.status !== "completed") {
+                    if (!intervalId) {
+                        intervalId == setInterval(fetchRecipe, 2000);
+                    }
+                } else {
+                    clearInterval(intervalId);
+                    setLoading(false);
+                }
             })
             .catch((err) => {
                 console.error(err);
@@ -21,13 +35,30 @@ export default function RecipeDetails() {
         };
 
         fetchRecipe();    
+
+        return () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+        }
     }, [id]);
 
+
+    if (loading && (!recipe || recipe.status === "processing")) {
+        return (
+            <Container sx={{ py: 4, textAlign: "center" }}>
+                <CircularProgress />
+                <Typography>Processing your recipe...</Typography>
+            </Container>
+        )
+    }
+
+    
     if (!recipe) {
         return (
-            <Typography>Loading recipe...</Typography>
+            <Typography>Recipe not found.</Typography>
         );
-  }
+    }
 
   return (
     <Container sx={{ py: 4 }}>
