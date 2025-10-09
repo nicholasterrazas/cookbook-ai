@@ -1,10 +1,11 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from models.recipe import Recipe, RecipeIn
+import video
 import shutil
 import os
 import db
-import asyncio
+import whisper
 
 
 app = FastAPI()
@@ -23,28 +24,14 @@ if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR) 
 
 
+stt_model = whisper.load_model("turbo")
+
+
 @app.get("/")
 def root():
     return {"message": "Welcome to Cookbook AI"}
 
 
-async def process_video(recipe_id, file_path):
-    # fake processing for now
-    # TODO: replace later with speech-to-text + NLP later
-    await asyncio.sleep(5)
-
-    processed_recipe = RecipeIn(
-        title="Spaghetti Bolognese",
-        description="Classic Italian pasta dish",
-        ingredients=["Spaghetti noodles", "Ground beef", "Tomato sauce"],
-        instructions=["Boil pasta", "Cook beef", "Mix pasta, sauce, and beef together"],
-        tags=["Italian", "easy", "pasta"],
-        image="https://www.kitchensanctuary.com/wp-content/uploads/2019/09/Spaghetti-Bolognese-square-FS-0204.jpg",
-        status="completed",
-        video_path=file_path
-    )
-
-    await db.update_recipe(recipe_id, processed_recipe)
 
 
 
@@ -75,7 +62,7 @@ async def upload_video(file: UploadFile, background_tasks: BackgroundTasks):
     recipe_id = recipe_in_progress.id
 
 
-    background_tasks.add_task(process_video, recipe_id, file_path)
+    background_tasks.add_task(video.process_video, stt_model, recipe_id, file_path)
 
     return recipe_in_progress
 
