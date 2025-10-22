@@ -4,7 +4,16 @@ from whisper import Whisper
 import ollama
 import json
 
+# Set to True to enable video processing, set to false to skip processing for testing purposes
+PROCESS_FLAG = False
+
+
+
 async def process_video(stt_model: Whisper, recipe_id, file_path):
+
+    if not PROCESS_FLAG:
+        print("Processing skipped due to PROCESS_FLAG being set to False.")
+        return
 
     # Stage 1: speech to text to transcribe video
     transcription = stt_model.transcribe(file_path, fp16=False)["text"]
