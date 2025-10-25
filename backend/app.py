@@ -1,6 +1,8 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
+from fastapi import FastAPI, Depends, UploadFile, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from models.recipe import Recipe, RecipeIn
+from auth import get_current_user, get_current_user_optional
+from typing import Optional
 import video
 import shutil
 import os
@@ -36,7 +38,9 @@ def root():
 
 
 @app.post("/recipes/upload-video")
-async def upload_video(file: UploadFile, background_tasks: BackgroundTasks):
+async def upload_video(file: UploadFile, background_tasks: BackgroundTasks, user: dict = Depends(get_current_user)):
+    
+
     if file.content_type != "video/mp4":
         raise HTTPException(status_code=400, detail="Only MP4 files are supported")
     
@@ -53,7 +57,8 @@ async def upload_video(file: UploadFile, background_tasks: BackgroundTasks):
         source=None,
         image=None,
         status="processing",
-        video_path=file_path
+        video_path=file_path,
+        owner_id=user
     )
 
     # upload the placeholder so that we can access its id from MongoDB
@@ -68,35 +73,41 @@ async def upload_video(file: UploadFile, background_tasks: BackgroundTasks):
 
 
 @app.get("/recipes", response_model=list[Recipe])
-async def get_recipes():
-    return await db.retrieve_recipes()
+async def get_recipes(user: str = Depends(get_current_user)):
+    return await db.retrieve_recipes(owner_id=user)
 
 
 @app.get("/recipes/{recipe_id}", response_model=Recipe)
-async def get_recipe(recipe_id: str):
+async def get_recipe(recipe_id: str, user: Optional[str] = Depends(get_current_user_optional)):
     recipe = await db.retrieve_recipe(recipe_id)
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found")
-    return recipe
+    
+    owner_id = recipe.owner_id
+    if owner_id == user or recipe.public:
+        return recipe    
+
+    raise HTTPException(status_code=403, detail="Not authorized to access this recipe")
 
 
 @app.post("/recipes", response_model=Recipe)
-async def add_recipe(recipe: RecipeIn):
+async def add_recipe(recipe: RecipeIn, user=Depends(get_current_user)):
+    recipe.owner_id = user
     return await db.create_recipe(recipe)
 
 
 @app.put("/recipes/{recipe_id}", response_model=Recipe)
-async def edit_recipe(recipe_id: str, recipe: RecipeIn):
-    updated = await db.update_recipe(recipe_id, recipe)
+async def edit_recipe(recipe_id: str, recipe: RecipeIn, user=Depends(get_current_user)):
+    updated = await db.update_recipe(recipe_id, recipe, user)
     if not updated:
-        raise HTTPException(status_code=404, detail="Recipe not found")
+        raise HTTPException(status_code=404, detail="Recipe not found or not authorized")
     return updated
 
 
 @app.delete("/recipes/{recipe_id}")
-async def remove_recipe(recipe_id: str):
-    deleted = db.delete_recipe(recipe_id)
+async def remove_recipe(recipe_id: str, user=Depends(get_current_user)):
+    deleted = await db.delete_recipe(recipe_id, owner_id=user)
     if not deleted:
-        raise HTTPException(status_code=404, detail="Recipe not found")
+        raise HTTPException(status_code=404, detail="Recipe not found or not authorized")
     return {"message": "Recipe deleted"}
 

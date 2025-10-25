@@ -10,8 +10,10 @@ class RecipeIn(BaseModel):
     tags: List[str]
     source: Optional[str] = None
     image: Optional[str] = None
-    status: str = "completed"   # defaults as completed for manually inputted recipes
+    status: str = "completed"       # defaults as completed for manually inputted recipes
     video_path: Optional[str] = None
+    owner_id: Optional[str] = None  # to track which user owns the recipe
+    public: bool = True             # default public recipes
 
 
 class Recipe(RecipeIn):

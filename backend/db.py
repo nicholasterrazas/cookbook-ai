@@ -8,6 +8,7 @@ client = AsyncIOMotorClient(MONGO_URI)
 
 db = client["cookbook_ai"]
 recipe_collection = db["recipes"]
+recipe_collection.create_index("owner_id")
 
 
 async def create_recipe(recipe: RecipeIn) -> Recipe:
@@ -18,9 +19,10 @@ async def create_recipe(recipe: RecipeIn) -> Recipe:
     return Recipe(**recipe_dict)
 
 
-async def retrieve_recipes() -> list[Recipe]:
+# Retrieve only owner's recipes
+async def retrieve_recipes(owner_id) -> list[Recipe]:
     recipes = []
-    async for recipe in recipe_collection.find():
+    async for recipe in recipe_collection.find({"owner_id": owner_id}):
         recipe["_id"] = str(recipe["_id"])
         recipes.append(Recipe(**recipe))
 
@@ -37,10 +39,14 @@ async def retrieve_recipe(recipe_id: str) -> Recipe | None:
         return Recipe(**recipe)
     
 
-async def update_recipe(recipe_id: str, new_recipe: RecipeIn) -> Recipe | None:
+async def update_recipe(recipe_id: str, new_recipe: RecipeIn, owner_id: str) -> Recipe | None:
     update_data = new_recipe.model_dump(exclude_unset=True)
+    if "owner_id" in update_data:   # prevent client from changin owner_id
+        del update_data["owner_id"]
+
     result = await recipe_collection.update_one(
-        {"_id": ObjectId(recipe_id)}, {"$set": update_data}
+        {"_id": ObjectId(recipe_id), "owner_id": owner_id}, 
+        {"$set": update_data}
     )
     if result.matched_count == 0:
         return None
@@ -50,9 +56,8 @@ async def update_recipe(recipe_id: str, new_recipe: RecipeIn) -> Recipe | None:
         return Recipe(**updated_recipe)
     
 
-async def delete_recipe(recipe_id: str) -> bool:
-    result = await recipe_collection.delete_one({"_id": ObjectId(recipe_id)})
-    if result.deleted_count == 0:
-        return False
-    else:
-        return True
+async def delete_recipe(recipe_id: str, owner_id: str) -> bool:
+    result = await recipe_collection.delete_one(
+        {"_id": ObjectId(recipe_id), "owner_id": owner_id}
+    )
+    return result.deleted_count > 0
