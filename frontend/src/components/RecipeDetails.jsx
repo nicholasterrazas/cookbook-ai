@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Container, Typography, Box, Chip, List, ListItem, ListItemText, Button, Divider, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function RecipeDetails() {
     const { id } = useParams();
@@ -9,12 +10,26 @@ export default function RecipeDetails() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+
     useEffect(() => {
         let intervalId;
 
         const fetchRecipe = async () => {
-            axios.get(`http://localhost:8000/recipes/${id}`)
-            .then((res) => {
+            let intervalId;
+            try {
+                const token = await getAccessTokenSilently({
+                    authorizationParams: {
+                        audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+                    },
+                });
+
+                const res = await axios.get(`http://localhost:8000/recipes/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
                 let recipe = res.data;
                 console.log(recipe);
                 setRecipe(recipe);
@@ -22,16 +37,15 @@ export default function RecipeDetails() {
                 // poll until the recipe is done being processed
                 if (recipe.status !== "completed") {
                     if (!intervalId) {
-                        intervalId == setInterval(fetchRecipe, 2000);
+                        intervalId = setInterval(fetchRecipe, 2000);
                     }
                 } else {
                     clearInterval(intervalId);
                     setLoading(false);
                 }
-            })
-            .catch((err) => {
+            } catch (err) {
                 console.error(err);
-            })
+            }
         };
 
         fetchRecipe();    
