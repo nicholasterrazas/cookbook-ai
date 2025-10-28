@@ -2,13 +2,17 @@ import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Too
 import { useState } from "react";
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useAuth0 } from "@auth0/auth0-react";
 
 const pages = ['Recipes', 'About'];
-const settings = ['Profile', 'Logout'];
 
 export default function Navbar() {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+
+    const settings = isAuthenticated ? ['Profile', 'Logout'] : ['Login'];
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -128,7 +132,9 @@ export default function Navbar() {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="User Avatar" src="https://previews.123rf.com/images/yupiramos/yupiramos1706/yupiramos170608486/79888149-funny-chef-avatar-character-vector-illustration-design.jpg" />
+                                <Avatar 
+                                    alt="User Avatar" 
+                                    src={isAuthenticated ? "https://previews.123rf.com/images/yupiramos/yupiramos1706/yupiramos170608486/79888149-funny-chef-avatar-character-vector-illustration-design.jpg" : undefined} />
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -148,7 +154,17 @@ export default function Navbar() {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                <MenuItem 
+                                    key={setting} 
+                                    onClick={() => {
+                                        handleCloseUserMenu();
+                                        if (setting === 'Login') {
+                                            loginWithRedirect();
+                                        } else if (setting === 'Logout') {
+                                            logout({ logoutParams: { returnTo: window.location.origin }})
+                                        }
+                                    }}
+                                >
                                     <Typography textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}
