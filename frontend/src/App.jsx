@@ -31,8 +31,8 @@ function App() {
 			}}
 		>
 			<ThemeProvider theme={theme}>
-				<Navbar />
 				<Router>
+					<Navbar />
 					<Routes>
 						<Route path="/" element={<Home />} />
 						<Route path="/recipes" element={<Recipes />} />
