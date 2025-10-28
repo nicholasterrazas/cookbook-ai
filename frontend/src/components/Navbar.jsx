@@ -3,8 +3,8 @@ import { useState } from "react";
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import MenuIcon from '@mui/icons-material/Menu';
 
-const pages = ['Home', 'Recipes', 'About'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages = ['Recipes', 'About'];
+const settings = ['Profile', 'Logout'];
 
 export default function Navbar() {
     const [anchorElNav, setAnchorElNav] = useState(null);
@@ -84,7 +84,7 @@ export default function Navbar() {
                                         key={page}
                                         href={`/${page.toLowerCase()}`}
                                         onClick={handleCloseNavMenu}
-                                        sx={{ my: 2, color: 'white', display: 'block', textAlign: 'center', padding: 1 }}
+                                        sx={{ my: 2, display: 'block', textAlign: 'center', padding: 1 }}
                                     >
                                         <Typography sx={{ textAlign: 'center' }}>
                                             {page}                                        
