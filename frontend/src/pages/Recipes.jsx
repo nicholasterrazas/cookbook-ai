@@ -16,9 +16,7 @@ export default function Recipes() {
 
     useEffect(() => {
         const fetchRecipes = async () => {
-            console.log(isAuthenticated);
             if (!isAuthenticated) {
-                // setLoading(false);
                 return;
             }
 
@@ -29,7 +27,6 @@ export default function Recipes() {
                     },
                 });
 
-                console.log(token);
                 const res = await axios.get("http://localhost:8000/recipes", {
                     headers: {
                         Authorization: `Bearer ${token}`,

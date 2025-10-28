@@ -107,7 +107,6 @@ async def get_current_user(authorization: Optional[str] = Header(None)):
     
     # Token is valid, return the payload (user info)
     user = payload["sub"]
-    print(payload)
     return user
     
 
