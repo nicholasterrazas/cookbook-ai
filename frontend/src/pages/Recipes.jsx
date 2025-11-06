@@ -46,17 +46,17 @@ export default function Recipes() {
     }, [isAuthenticated, getAccessTokenSilently]);
 
 
+    if (!isAuthenticated) {
+        return <LoginPrompt />;
+    }
+
+
     if (loading) {
         return (
             <Container sx={{ py: 4 }}>
                 <Typography variant="h6">Loading recipes...</Typography>
             </Container>
         );
-    }
-
-
-    if (!isAuthenticated) {
-        return <LoginPrompt />;
     }
 
 
