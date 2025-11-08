@@ -62,8 +62,28 @@ export default function RecipeDetails() {
         // TODO: implement modification of recipe
     };
 
-    const handleDelete = () => {
-        // TODO: implement deletion of recipe
+    const handleDelete = async () => {
+        
+        try {
+            const token = await getAccessTokenSilently({
+                authorizationParams: {
+                    audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+                },
+            });
+
+            const res = await axios.delete(
+                `http://localhost:8000/recipes/${recipe._id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+
+            console.log(res);
+        } catch (err) {
+            console.error(err);
+        }
     };
 
 
