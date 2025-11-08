@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Recipe } from "../models/Recipe";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 // split ingredients by newlines, so we can include quantities of ingredients if included
 function processIngredients(ingredientsString) {
@@ -20,7 +21,7 @@ function processTags(tagsString) {
 }
 
 
-export default function ManualInputRecipeForm() {
+export default function ManualInputRecipeForm( ) {
     const [form, setForm] = useState({
         title: "",
         description: "",
@@ -30,11 +31,13 @@ export default function ManualInputRecipeForm() {
         tags: "",
     })
 
+    const { getAccessTokenSilently } = useAuth0();
+    const navigate = useNavigate();
+
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     };
 
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -50,15 +53,32 @@ export default function ManualInputRecipeForm() {
                 tags: processedTags
         };
 
-        await axios.post("http://localhost:8000/recipes/", recipe)
-        .then((res) => {
+
+        try {
+            const token = await getAccessTokenSilently({
+                authorizationParams: {
+                    audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+                },
+            });
+
+            const res = await axios.post(
+                "http://localhost:8000/recipes", 
+                recipe,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
             console.log(res);
-            const recipeId = res.data._id 
+            const recipeId = res.data._id;
             navigate(`/recipes/${recipeId}`)
-        })
-        .catch((err) => {
-            console.error(err);
-        })
+        } catch (err) {
+            console.err(res);
+        }
+
+
     }
 
     return (
