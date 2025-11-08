@@ -90,6 +90,7 @@ export default function RecipeDetails() {
             )
 
             console.log(res);
+            navigate("/recipes")
         } catch (err) {
             console.error(err);
         }
