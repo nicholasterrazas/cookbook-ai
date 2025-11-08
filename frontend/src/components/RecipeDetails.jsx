@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Typography, Box, Chip, List, ListItem, ListItemText, Button, Divider, CircularProgress } from "@mui/material";
+import { Container, Typography, Box, Chip, List, ListItem, ListItemText, Button, Divider, CircularProgress, Stack, ButtonGroup } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -10,7 +10,7 @@ export default function RecipeDetails() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+    const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
         let intervalId;
@@ -58,6 +58,15 @@ export default function RecipeDetails() {
     }, [id]);
 
 
+    const handleEdit = () => {
+        // TODO: implement modification of recipe
+    };
+
+    const handleDelete = () => {
+        // TODO: implement deletion of recipe
+    };
+
+
     if (loading && (!recipe || recipe.status === "processing")) {
         return (
             <Container sx={{ py: 4, textAlign: "center" }}>
@@ -76,9 +85,16 @@ export default function RecipeDetails() {
 
   return (
     <Container sx={{ py: 4 }}>
-        <Button variant="outlined" onClick={() => navigate("/recipes")}>
-            Back
-        </Button>
+        <Stack direction="row" sx={{justifyContent: "space-between"}}>
+            <Button variant="outlined" onClick={() => navigate("/recipes")}>
+                Back
+            </Button>
+
+            <ButtonGroup variant="contained">
+                <Button onClick={handleEdit}>Edit</Button>
+                <Button onClick={handleDelete}>Delete</Button>
+            </ButtonGroup>
+        </Stack>
 
         <Typography variant="h3" gutterBottom sx={{ mt: 2 }}>
         {recipe.title}
