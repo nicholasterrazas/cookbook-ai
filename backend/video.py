@@ -5,11 +5,11 @@ import ollama
 import json
 
 # Set to True to enable video processing, set to false to skip processing for testing purposes
-PROCESS_FLAG = False
+PROCESS_FLAG = True
 
 
 
-async def process_video(stt_model: Whisper, recipe_id, file_path):
+async def process_video(stt_model: Whisper, recipe_id, user, file_path):
 
     if not PROCESS_FLAG:
         print("Processing skipped due to PROCESS_FLAG being set to False.")
@@ -60,4 +60,5 @@ async def process_video(stt_model: Whisper, recipe_id, file_path):
         video_path=file_path
     )
 
-    await db.update_recipe(recipe_id, processed_recipe)
+    await db.update_recipe(recipe_id, processed_recipe, user)
+    print("Successfully processed and uploaded recipe")

@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -19,23 +20,39 @@ const VisuallyHiddenInput = styled('input')({
 
 export default function VideoInputRecipeForm() {
     const navigate = useNavigate();
+    const { getAccessTokenSilently } = useAuth0();
 
-    const handleVideoUpload = (e) => {
+
+    const handleVideoUpload = async (e) => {
         const file = e.target.files[0];
         const formData = new FormData();
         formData.append("file", file)
 
-        axios.post("http://localhost:8000/recipes/upload-video", formData, {
-            headers: { "Content-Type": "multipart/form-data"}
-        })
-        .then((res) => {
+        try {
+            const token = await getAccessTokenSilently({
+                authorizationParams: {
+                    audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+                },
+            });
+
+            const res = await axios.post(
+                "http://localhost:8000/recipes/upload-video",
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            )
+
             console.log(res);
-            const recipeId = res.data._id
-            navigate(`/recipes/${recipeId}`)
-        })
-        .catch((err) => {
-            console.error(err);
-        })
+            const recipeId = res.data._id;
+            navigate(`/recipes/${recipeId}`);
+        } catch (err) {
+            console.err(err);
+        }
+
     };
 
     return (

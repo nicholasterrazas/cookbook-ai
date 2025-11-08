@@ -38,7 +38,7 @@ def root():
 
 
 @app.post("/recipes/upload-video")
-async def upload_video(file: UploadFile, background_tasks: BackgroundTasks, user: dict = Depends(get_current_user)):
+async def upload_video(file: UploadFile, background_tasks: BackgroundTasks, user: str = Depends(get_current_user)):
     
 
     if file.content_type != "video/mp4":
@@ -65,9 +65,14 @@ async def upload_video(file: UploadFile, background_tasks: BackgroundTasks, user
     # so we can poll for the id once the recipe is done being processed 
     recipe_in_progress = await db.create_recipe(placeholder_recipe)
     recipe_id = recipe_in_progress.id
+    print(f"Uploaded pending recipe, recipe_id={recipe_id}")
 
 
-    background_tasks.add_task(video.process_video, stt_model, recipe_id, file_path)
+    try:
+        background_tasks.add_task(video.process_video, stt_model, recipe_id, user, file_path)
+    except Exception as e:
+        print(e)
+
 
     return recipe_in_progress
 
