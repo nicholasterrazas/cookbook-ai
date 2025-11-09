@@ -38,9 +38,10 @@ It’s designed to make recipe creation effortless — transforming raw footage 
 - [x] LLM for NLP post-processing
 - [x] Frontend upload page with MP4 validation
 - [x] Recipe details page with polling for status updates
+- [X] User authentication and profiles
 
 ### 🚧 In Development
-- [ ] User authentication and profiles
+- [ ] Host website
 - [ ] Upload progress UI/better loading states
 - [ ] Better error handling
 - [ ] Option to upload or paste a URL for videos
