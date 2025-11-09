@@ -6,6 +6,7 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import { Auth0Provider } from "@auth0/auth0-react";
 import NewRecipe from "./pages/NewRecipe";
 import RecipeDetails from "./components/RecipeDetails";
+import EditRecipe from "./pages/EditRecipe";
 
 
 const theme = createTheme({
@@ -38,6 +39,7 @@ function App() {
 						<Route path="/recipes" element={<Recipes />} />
 						<Route path="/recipes/new" element={<NewRecipe />} />
 						<Route path="/recipes/:id" element={<RecipeDetails />} />
+						<Route path="/recipes/edit/:id" element={<EditRecipe />}/>
 					</Routes>
 				</Router>
 			</ThemeProvider>			

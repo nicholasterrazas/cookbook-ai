@@ -60,7 +60,7 @@ export default function RecipeDetails() {
 
 
     const handleEdit = () => {
-        // TODO: implement modification of recipe
+        navigate(`/recipes/edit/${recipe._id}`);
     };
 
     const handleOpenAlert = () => {
