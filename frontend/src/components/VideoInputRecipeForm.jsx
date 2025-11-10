@@ -18,6 +18,8 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function VideoInputRecipeForm() {
     const navigate = useNavigate();
     const { getAccessTokenSilently } = useAuth0();
@@ -36,7 +38,7 @@ export default function VideoInputRecipeForm() {
             });
 
             const res = await axios.post(
-                "http://localhost:8000/recipes/upload-video",
+                `${baseUrl}/recipes/upload-video`,
                 formData,
                 {
                     headers: {

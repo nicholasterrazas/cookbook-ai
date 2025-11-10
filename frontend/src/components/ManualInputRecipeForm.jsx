@@ -20,6 +20,7 @@ function processTags(tagsString) {
     return tagsString.split(", ");
 }
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default function ManualInputRecipeForm( ) {
     const [form, setForm] = useState({
@@ -62,7 +63,7 @@ export default function ManualInputRecipeForm( ) {
             });
 
             const res = await axios.post(
-                "http://localhost:8000/recipes", 
+                `${baseUrl}/recipes`, 
                 recipe,
                 {
                     headers: {

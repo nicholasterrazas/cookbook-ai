@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function RecipeDetails() {
     const { id } = useParams();
     const [recipe, setRecipe] = useState(null);
@@ -25,7 +28,7 @@ export default function RecipeDetails() {
                     },
                 });
 
-                const res = await axios.get(`http://localhost:8000/recipes/${id}`, {
+                const res = await axios.get(`${baseUrl}/recipes/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -81,7 +84,7 @@ export default function RecipeDetails() {
             });
 
             const res = await axios.delete(
-                `http://localhost:8000/recipes/${recipe._id}`,
+                `${baseUrl}/recipes/${recipe._id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

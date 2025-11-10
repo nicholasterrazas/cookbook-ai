@@ -6,6 +6,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import LoginPrompt from "../components/LoginPrompt";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default function Recipes() {
     const [recipes, setRecipes] = useState([]);
@@ -27,7 +28,7 @@ export default function Recipes() {
                     },
                 });
 
-                const res = await axios.get("http://localhost:8000/recipes", {
+                const res = await axios.get(`${baseUrl}/recipes`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

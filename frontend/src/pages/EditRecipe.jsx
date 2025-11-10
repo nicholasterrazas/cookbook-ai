@@ -19,7 +19,7 @@ function processTags(tagsString) {
     return tagsString.split(", ");
 }
 
-
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default function EditRecipe() {
     const [recipe, setRecipe] = useState(null);
@@ -45,7 +45,7 @@ export default function EditRecipe() {
                     },
                 });
 
-                const res = await axios.get(`http://localhost:8000/recipes/${id}`, {
+                const res = await axios.get(`${baseUrl}/recipes/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -91,7 +91,7 @@ export default function EditRecipe() {
             });
 
             const res = await axios.put(
-                `http://localhost:8000/recipes/${recipe._id}`, 
+                `${baseUrl}/recipes/${recipe._id}`, 
                 newRecipe,
                 {
                     headers: {
